@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # MicroKit uses iOS 26 / Swift 6.2 tooling — needs Xcode 26.
+      - name: Select Xcode 26
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$XCODE" ]; then
+            echo "No Xcode 26 on this runner. Available:" >&2
+            ls /Applications | grep -i xcode >&2
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      # The platform-agnostic core (JSONStore, LaunchAction) builds and tests on
+      # the macOS host; iOS-only helpers are #if os(iOS) gated. The consuming
+      # apps' CI is the real iOS integration check.
+      - name: Swift test
+        run: swift test
