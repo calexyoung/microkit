@@ -6,8 +6,14 @@ import PackageDescription
 // when the second app needs it, never before).
 //
 // Contents are deliberately minimal — only what ≥2 apps actually share:
-// JSONStore (persistence), LaunchAction (intent→UI handoff), and a Live
-// Activity re-attach helper. App-specific views/intents/models stay app-local.
+// JSONStore (persistence), LaunchAction (intent→UI handoff), a Live Activity
+// re-attach helper, the pin Live Activity, and the suite's design kit
+// (MicrotoolsKit.swift — moved here 2026-11-16 once Ramp became its third
+// adopter, after being proven in Catch and Hold). App-specific
+// views/intents/models stay app-local.
+//
+// Catch does not depend on this package and carries a byte-identical copy of
+// MicrotoolsKit.swift; run scripts/check-kit-sync.sh after changing it.
 let package = Package(
     name: "MicroKit",
     // iOS is the real target; macOS is declared only so the CI host can
