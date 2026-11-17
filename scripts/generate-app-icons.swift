@@ -137,19 +137,6 @@ func circle(_ x: CGFloat, _ y: CGFloat, _ r: CGFloat) -> CGPath {
     CGPath(ellipseIn: CGRect(x: x - r, y: y - r, width: 2 * r, height: 2 * r), transform: nil)
 }
 
-/// A solid arrowhead with its tip at `tip`, pointing along `angle` (radians,
-/// y down).
-func arrowhead(tip: CGPoint, angle: CGFloat, length: CGFloat, halfWidth: CGFloat) -> CGPath {
-    let p = CGMutablePath()
-    let back = CGPoint(x: tip.x - cos(angle) * length, y: tip.y - sin(angle) * length)
-    let nx = -sin(angle), ny = cos(angle)
-    p.move(to: tip)
-    p.addLine(to: CGPoint(x: back.x + nx * halfWidth, y: back.y + ny * halfWidth))
-    p.addLine(to: CGPoint(x: back.x - nx * halfWidth, y: back.y - ny * halfWidth))
-    p.closeSubpath()
-    return p
-}
-
 // MARK: - The marks (original drawings; y grows downward)
 
 /// Catch: a voice, as five bars.
@@ -184,32 +171,61 @@ func drawPin(_ ctx: CGContext) {
     ctx.restoreGState()
 }
 
-/// Ramp: coming down onto solid ground. One unbroken line to land on.
-func drawLanding(_ ctx: CGContext) {
-    let arc = CGMutablePath()
-    arc.move(to: CGPoint(x: 150, y: -200))
-    arc.addQuadCurve(to: CGPoint(x: -98, y: 72), control: CGPoint(x: 10, y: -170))
-    stroke(ctx, arc, width: 50)
-    fill(ctx, arrowhead(tip: CGPoint(x: -128, y: 132), angle: 2.03, length: 120, halfWidth: 84))
-    let ground = CGMutablePath()
-    ground.move(to: CGPoint(x: -200, y: 192))
-    ground.addLine(to: CGPoint(x: 200, y: 192))
-    stroke(ctx, ground, width: 44)
+/// A small airliner seen from the side, nose toward +x, centred near (0, 0).
+/// Drawn from scratch: a rounded body, two swept wings, a fin and a tailplane.
+func drawPlane(_ ctx: CGContext) {
+    let body = CGMutablePath()
+    body.move(to: CGPoint(x: -168, y: 0))
+    body.addLine(to: CGPoint(x: 150, y: 0))
+    stroke(ctx, body, width: 76)
+
+    func blade(_ points: [CGPoint]) {
+        let p = CGMutablePath()
+        p.addLines(between: points)
+        p.closeSubpath()
+        fill(ctx, p)
+        stroke(ctx, p, width: 18)   // rounds the corners
+    }
+    // Near wing, swept back and down.
+    blade([CGPoint(x: 52, y: 14), CGPoint(x: -64, y: 168), CGPoint(x: -112, y: 168), CGPoint(x: -44, y: 14)])
+    // Far wing, shorter, swept back and up.
+    blade([CGPoint(x: 36, y: -14), CGPoint(x: -40, y: -118), CGPoint(x: -80, y: -118), CGPoint(x: -40, y: -14)])
+    // Fin.
+    blade([CGPoint(x: -112, y: -22), CGPoint(x: -176, y: -128), CGPoint(x: -214, y: -128), CGPoint(x: -182, y: -22)])
+    // Tailplane.
+    blade([CGPoint(x: -138, y: 16), CGPoint(x: -196, y: 76), CGPoint(x: -226, y: 76), CGPoint(x: -186, y: 16)])
 }
 
-/// Runway: lifting off. A dashed centre line left behind.
+/// Ramp: a plane coming down, toward the left, onto one unbroken line.
+func drawLanding(_ ctx: CGContext) {
+    let ground = CGMutablePath()
+    ground.move(to: CGPoint(x: -200, y: 204))
+    ground.addLine(to: CGPoint(x: 200, y: 204))
+    stroke(ctx, ground, width: 44)
+
+    ctx.saveGState()
+    ctx.translateBy(x: -22, y: -34)
+    ctx.scaleBy(x: -0.9, y: 0.9)          // mirrored: nose to the left
+    ctx.rotate(by: 0.36)                   // nose down
+    drawPlane(ctx)
+    ctx.restoreGState()
+}
+
+/// Runway: a plane lifting off, toward the right, a dashed centre line left
+/// behind.
 func drawTakeoff(_ ctx: CGContext) {
     for x in stride(from: CGFloat(-190), through: 150, by: 170) {
         let dash = CGMutablePath()
-        dash.move(to: CGPoint(x: x, y: 192))
-        dash.addLine(to: CGPoint(x: x + 80, y: 192))
+        dash.move(to: CGPoint(x: x, y: 204))
+        dash.addLine(to: CGPoint(x: x + 80, y: 204))
         stroke(ctx, dash, width: 40)
     }
-    let arc = CGMutablePath()
-    arc.move(to: CGPoint(x: -190, y: 96))
-    arc.addQuadCurve(to: CGPoint(x: 96, y: -116), control: CGPoint(x: 30, y: 84))
-    stroke(ctx, arc, width: 50)
-    fill(ctx, arrowhead(tip: CGPoint(x: 150, y: -196), angle: -0.98, length: 120, halfWidth: 84))
+    ctx.saveGState()
+    ctx.translateBy(x: 10, y: -50)
+    ctx.scaleBy(x: 0.9, y: 0.9)
+    ctx.rotate(by: -0.36)                  // nose up
+    drawPlane(ctx)
+    ctx.restoreGState()
 }
 
 /// Actual: a stopwatch, with the time already running.
