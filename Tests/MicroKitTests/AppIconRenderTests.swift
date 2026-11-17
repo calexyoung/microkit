@@ -36,6 +36,8 @@ final class AppIconRenderTests: XCTestCase {
             name: "Runway", hue: Color(red: 0.25, green: 0.62, blue: 0.95), mark: "airplane.departure")),
         Icon(file: "sweep", identity: Kit.Identity(
             name: "Sweep", hue: Color(red: 0.15, green: 0.78, blue: 0.35), mark: "checkmark")),
+        Icon(file: "snap", identity: Kit.Identity(
+            name: "Snap", hue: Color(red: 0.40, green: 0.48, blue: 0.60), mark: "doc.viewfinder")),
         // Faces has no KitGround: its screens sit on Theme.bg.
         Icon(file: "faces", identity: Kit.Identity(
             name: "Faces", hue: Color(red: 242 / 255, green: 86 / 255, blue: 156 / 255), mark: "face.smiling"),

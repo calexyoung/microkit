@@ -1,5 +1,5 @@
 #!/bin/bash
-# Renders all seven app icons from the real kit views (KitGround + KitOrb)
+# Renders all eight app icons from the real kit views (KitGround + KitOrb)
 # on an iOS simulator and copies them into each app's icon set.
 #
 #   scripts/render-app-icons.sh <simulator UDID> [Developer dir]
@@ -28,8 +28,9 @@ ramp:ramp/Ramp/Assets.xcassets/AppIcon.appiconset/AppIcon.png
 actual:actual/Actual/Assets.xcassets/AppIcon.appiconset/AppIcon.png
 runway:runway/Runway/Assets.xcassets/AppIcon.appiconset/AppIcon.png
 sweep:sweep/Sweep/Assets.xcassets/AppIcon.appiconset/AppIcon.png
-faces:meeting-place/CatchAFace/Assets.xcassets/AppIcon.appiconset/Icon-1024.png"
-# All seven must exist before any icon set is touched.
+faces:meeting-place/CatchAFace/Assets.xcassets/AppIcon.appiconset/Icon-1024.png
+snap:snap/Snap/Assets.xcassets/AppIcon.appiconset/AppIcon.png"
+# All eight must exist before any icon set is touched.
 for p in $PAIRS; do place "${p%%:*}" "${p#*:}"; done
 for p in $PAIRS; do copy "${p%%:*}" "${p#*:}"; done
 echo "renders kept in $OUT"
