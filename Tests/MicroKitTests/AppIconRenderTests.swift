@@ -3,8 +3,9 @@ import XCTest
 import MicroKit
 
 /// Renders the suite's app icons from the real kit views, so an icon is
-/// exactly what the app shows: `KitGround` at rest behind `KitOrb`, in the
-/// app's hue, carrying the app's own mark.
+/// what the app shows: `KitGround` at rest behind `KitOrb`, in the app's hue,
+/// carrying the app's own mark. The one difference from the screen is size:
+/// the orb fills more of the square and the mark more of the orb.
 ///
 /// Not a test of behaviour. It is skipped unless `ICON_OUT` names a folder,
 /// and it is run on the iOS simulator by `scripts/render-app-icons.sh`
@@ -56,7 +57,9 @@ final class AppIconRenderTests: XCTestCase {
                 // top colour is translucent and shows it.
                 Color.black
                 if let flat = icon.flatGround { flat } else { KitGround(stage: .ready) }
-                KitOrb(diameter: side * 0.6, breathes: false)
+                // The app's own orb, with its mark enlarged (0.42 on screen) so it
+                // reads at home-screen size.
+                KitOrb(diameter: side * 0.74, breathes: false, markScale: 0.56)
             }
             .frame(width: side, height: side)
             .kitIdentity(icon.identity)

@@ -247,6 +247,7 @@ public struct KitGround: View {
 public struct KitOrb: View {
     private let diameter: CGFloat
     private let breathes: Bool
+    private let markScale: CGFloat
 
     @Environment(\.kitIdentity) private var identity
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -257,9 +258,13 @@ public struct KitOrb: View {
     ///     (a number, an intention) is the hero.
     ///   - breathes: pass `false` wherever the orb is not the thing to look
     ///     at, so it never pulls the eye from what is.
-    public init(diameter: CGFloat = 132, breathes: Bool = true) {
+    ///   - markScale: the mark's size as a share of the diameter. Leave it
+    ///     alone on screen; the app icons use a larger mark so it reads at
+    ///     home-screen size.
+    public init(diameter: CGFloat = 132, breathes: Bool = true, markScale: CGFloat = 0.42) {
         self.diameter = diameter
         self.breathes = breathes
+        self.markScale = markScale
     }
 
     /// Re-evaluated on every render, so turning Reduce Motion on while the
@@ -278,7 +283,7 @@ public struct KitOrb: View {
                 )
                 .shadow(color: identity.hue.opacity(0.7), radius: diameter * 0.28)
             Image(systemName: identity.mark)
-                .font(.system(size: diameter * 0.42, weight: .semibold))
+                .font(.system(size: diameter * markScale, weight: .semibold))
                 .foregroundStyle(.white)
         }
         .frame(width: diameter, height: diameter)
